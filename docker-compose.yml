@@ -1,0 +1,89 @@
+version: "3.3"
+
+services:
+  nginx:
+    depends_on:
+      - pgsql
+      - php
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./docker/nginx
+    environment:
+      TZ: America/Argentina/Buenos_Aires
+    ports:
+      - "8081:80"
+    volumes:
+      - ./files:/var/www/html/
+    container_name: yii2_test_ngnix
+
+  pgsql:
+    build:
+      dockerfile: Dockerfile
+      context: ./docker/pgsql
+    restart: always
+    environment:
+      POSTGRES_USER: "dev"
+      POSTGRES_PASSWORD: "d3v"
+      POSTGRES_DB: "unsplash"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./var/lib/pgdata:/var/lib/postgresql/data"
+    container_name: yii2_test_pgsql
+
+  php:
+    depends_on:
+      - redis
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./docker/php
+      args:
+        UID: 1000
+        GID: 1000
+    ports:
+      - "9002:9000"
+    volumes:
+      - "./files:/var/www/html/"
+    container_name: yii2_test_php
+  redis:
+    build:
+        dockerfile: Dockerfile
+        context: ./docker/redis
+    container_name: yii2_test_redis
+  
+  frontend:
+    build: frontend
+    ports:
+      - 20080:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  backend:
+    build: backend
+    ports:
+      - 21080:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  # mysql:
+  #   image: mysql:5.7
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=verysecret
+  #     - MYSQL_DATABASE=yii2advanced
+  #     - MYSQL_USER=yii2advanced
+  #     - MYSQL_PASSWORD=secret
+
+  #pgsql:
+  #  image: postgres:9.5
+  #  environment:
+  #    - POSTGRES_DB=yii2advanced
+  #    - POSTGRES_USER=yii2advanced
+  #    - POSTGRES_PASSWORD=secret
