@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use frontend\models\Favorites;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -208,5 +209,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getFavourites()
+    {
+        return $this->hasMany(Favorites::class, ['user_id' => 'id']);
     }
 }

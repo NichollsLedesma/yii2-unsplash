@@ -1,32 +1,67 @@
-<?php
-
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Html;
-
-?>
-
 <div>
     <div class="search-box">
-        <?php $form = ActiveForm::begin(); ?>
-
-        <?= $form->field($model, 'search')->input(['autofocus' => true]) ?>
-
-        <div class="form-group">
-            <?= Html::submitButton('index', ['class' => 'btn btn-primary']) ?>
+        <div class="form-inline">
+            <input type="text" value="" name="search" , id="search" class="form-control" autocomplete="off">
+            <button onclick="search()" class="btn btn-primary">Search</button>
         </div>
-
-        <?php ActiveForm::end(); ?>
     </div>
 
     <div class="list-box">
-        <?php foreach ($photos as $photo) { ?>
-            <div class="box-photo">
-                <a target="_blank" href="<?= $photo["urls"]["small"] ?>">
-                    <img src="<?= $photo["urls"]["small"] ?>" alt="photo" width="600" height="400">
-                </a>
-                <div class="description"><?= $photo["description"] ?? $photo["alt_description"] ?></div>
-                <?= Html::a(Yii::t('app', 'Add favorites'), ['favorites/add', 'photoId' => $photo["id"]], ['class' => 'btn btn-success']) ?>
-            </div>
-        <?php } ?>
+        <div id="gallery"></div>
     </div>
 </div>
+
+<script>
+    function search() {
+        const search = $("#search").val();
+
+        if (!search) {
+            return alert("Search no can't be empty");
+        }
+
+        const url = `/index.php?r=unsplash/search`;
+        $.ajax({
+            url,
+            type: "POST",
+            data: {
+                search
+            },
+            success: function(data) {
+                let strToRender = "<p>No results</p>";
+
+                if (data.data.length > 0) {
+                    let description;
+                    strToRender = "";
+
+                    data.data.forEach(photo => {
+                        description = photo.description || photo.alt_description;
+                        strToRender += buildBox(photo.urls.small, description, photo.id);
+                    });
+                }
+
+                $("#gallery").html(strToRender);
+            }
+        });
+    }
+
+    function addFavorites(photoId) {
+        const url = `/index.php?r=favorites/add&photoId=${photoId}`;
+        $.ajax({
+            url,
+            type: "GET",
+            success: function(data) {
+                alert(data.message);
+            }
+        });
+    }
+
+    function buildBox(url, description, photoId) {
+        return `<div class="box-photo">` +
+            `<a target="_blank" href="${url}">` +
+            `<img src="${url}" alt="photo" width="600" height="400">` +
+            `</a>` +
+            `<div class="description">${description}</div>` +
+            `<button class="btn btn-success" onclick="addFavorites('${photoId}')">Add favorites</button>` +
+            `</div>`;
+    }
+</script>

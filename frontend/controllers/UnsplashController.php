@@ -6,31 +6,36 @@ use yii\httpclient\Client;
 use Exception;
 use frontend\models\UnsplashSearchForm;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * UnsplashController implements the CRUD actions for Favorites model.
  */
 class UnsplashController extends Controller
 {
-    public function actionIndex()
-    {
-        $model = new UnsplashSearchForm();
-        $photos = [];
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $photos = $this->search($model->search);
-        }
 
-        return $this->render('index', [
-            'model' => $model,
-            'photos' => $photos
-        ]);
+     /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+           
+        ];
     }
 
 
-    public function search(string $search)
+    public function actionIndex()
     {
+          return $this->render('index');
+    }
+
+    public function actionSearch()
+    {
+        $search = Yii::$app->request->post()["search"];
         $server = "https://api.unsplash.com/";
         $clientId = "Fvl6_IMfndHATC4uEIs5XDwdSFbnBaLam_PWIHSOq-o";
         $client = new Client(['baseUrl' => $server]);
@@ -42,7 +47,12 @@ class UnsplashController extends Controller
             $photos = $response->getData()["results"];
         }
 
-        return $photos;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            "search" =>$search,
+            "data" => $photos
+        ];
         
     }
 

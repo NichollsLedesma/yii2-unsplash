@@ -2,19 +2,17 @@
 
 namespace frontend\controllers;
 
-use common\models\User;
 use DateTime;
 use Exception;
 use Yii;
 use frontend\models\Favorites;
-use frontend\models\UnsplashSearchForm;
 use igogo5yo\uploadfromurl\UploadFromUrl;
 use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\BaseFileHelper;
+use yii\web\Response;
 use ZipArchive;
 
 /**
@@ -143,11 +141,16 @@ class FavoritesController extends Controller
     public function actionAdd(string $photoId)
     {
         $userId = Yii::$app->user->id;
+        $message = [
+            "type" => "success",
+            "message" => "favorite added."
+        ];
 
         if (!$userId) {
-            Yii::$app->session->setFlash("error", "You need be logged.");
-
-            return $this->goHome();
+            $message = [
+                "type" => "error",
+                "message" => "You need be logged."
+            ];
         }
         $isFavorite = Favorites::find()
             ->where([
@@ -157,7 +160,11 @@ class FavoritesController extends Controller
             ->exists();
 
         if ($isFavorite) {
-            Yii::$app->session->setFlash("warning", "photo already added.");
+            $message = [
+                "type" => "warning",
+                "message" => "photo already added."
+            ];
+    
         } else {
             $photo = UnsplashController::searchOne($photoId);
             $url = $photo["urls"]["small"];
@@ -175,13 +182,15 @@ class FavoritesController extends Controller
                 $newFavorite->updated_at = $now;
 
                 $newFavorite->save();
-                Yii::$app->session->setFlash("success", "favorite added.");
             } catch (Exception $e) {
-                Yii::$app->session->setFlash("error", "favorite not added.");
+                $message = [
+                    "type" => "error",
+                    "message" => "something happend. Favorite not added."
+                ];
             }
         }
-
-        return $this->redirect(array("unsplash/index"));
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return $message;
     }
 
     public function actionDownload(string $photoId = null)

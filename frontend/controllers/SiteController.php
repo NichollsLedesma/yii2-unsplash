@@ -16,6 +16,7 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use Unsplash\Search;
+use yii\helpers\ArrayHelper;
 
 /**
  * Site controller
@@ -70,14 +71,23 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return mixed
-     */
     public function actionIndex()
     {
-        return $this->render('index');
+        $collection = [];
+
+        if (!Yii::$app->user->isGuest) {
+            $collection = Yii::$app->user->identity->getFavourites()->asArray()->all();
+        } else {
+            return Yii::$app->getResponse()->redirect('site/login');
+        }
+
+        $images = ArrayHelper::getColumn($collection, function ($element) {
+            return '<img src="' . $element['url'] . '"/>';
+        });
+        
+        return $this->render('index', [
+            'collection' => $images
+        ]);
     }
 
     /**

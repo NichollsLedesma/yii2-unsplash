@@ -118,3 +118,32 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.container-photos {
+    height: auto;
+    width: 100%;
+    display: flex !important;
+}
+
+.unsplash-photos {
+    align-items: center;
+    width: 100%;
+    height: auto;
+}
+
+.box-photo {
+    margin: 5px;
+    border: 1px solid #dadada;
+    float: left;
+    width: 30%;
+}
+
+.box-photo img {
+    width: 100%;
+    height: auto;
+}
+
+.box-photo .description {
+    padding: 15px;
+    text-align: center;
+}
