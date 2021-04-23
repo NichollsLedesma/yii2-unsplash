@@ -16,7 +16,7 @@ return [
             'class' => 'yii\redis\Cache',
             'defaultDuration' => 86400,
             'redis' => [
-                'hostname' => 'localhost',
+                'hostname' => 'redis',
                 'port' => 6379,
                 'database' => 0,
             ]

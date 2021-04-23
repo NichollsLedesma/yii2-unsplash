@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e7f6c5a3942a4ac2f9ec35663fa1f4d",
+    "content-hash": "c9b6a684c9e6e522ba8a3f33cfb51a53",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -53,7 +53,7 @@
             "version": "3.5.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "4c0e4becb8263bb5b3e6dadc448d8e7305ef8215"
             },
             "dist": {
@@ -656,6 +656,57 @@
                 "source": "https://github.com/HughbertD/oauth2-unsplash/tree/master"
             },
             "time": "2017-12-14T13:08:42+00:00"
+        },
+        {
+            "name": "igogo5yo/yii2-upload-from-url",
+            "version": "v1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/igogo5yo/yii2-upload-from-url.git",
+                "reference": "331a461fd2788ea7b845e4cd485e3d05ba3d047f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/igogo5yo/yii2-upload-from-url/zipball/331a461fd2788ea7b845e4cd485e3d05ba3d047f",
+                "reference": "331a461fd2788ea7b845e4cd485e3d05ba3d047f",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0.0"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "igogo5yo\\uploadfromurl\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Skliar Ihor",
+                    "email": "skliar.ihor@gmail.com"
+                }
+            ],
+            "description": "UploadFromUrl extension for Yii Framework 2",
+            "keywords": [
+                "framework",
+                "igogo5yo",
+                "upload file",
+                "upload link",
+                "upload url",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/igogo5yo/yii2-upload-from-url/issues",
+                "source": "https://github.com/igogo5yo/yii2-upload-from-url/tree/master"
+            },
+            "time": "2018-01-16T07:37:34+00:00"
         },
         {
             "name": "league/oauth2-client",
@@ -2322,16 +2373,16 @@
         },
         {
             "name": "codeception/lib-innerbrowser",
-            "version": "1.4.2",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/lib-innerbrowser.git",
-                "reference": "4ffb91c18e4cacd073ff2914c07e5ccaf5efe449"
+                "reference": "4b0d89b37fe454e060a610a85280a87ab4f534f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/lib-innerbrowser/zipball/4ffb91c18e4cacd073ff2914c07e5ccaf5efe449",
-                "reference": "4ffb91c18e4cacd073ff2914c07e5ccaf5efe449",
+                "url": "https://api.github.com/repos/Codeception/lib-innerbrowser/zipball/4b0d89b37fe454e060a610a85280a87ab4f534f1",
+                "reference": "4b0d89b37fe454e060a610a85280a87ab4f534f1",
                 "shasum": ""
             },
             "require": {
@@ -2376,9 +2427,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/lib-innerbrowser/issues",
-                "source": "https://github.com/Codeception/lib-innerbrowser/tree/1.4.2"
+                "source": "https://github.com/Codeception/lib-innerbrowser/tree/1.5.0"
             },
-            "time": "2021-04-06T05:26:49+00:00"
+            "time": "2021-04-23T06:18:29+00:00"
         },
         {
             "name": "codeception/module-asserts",

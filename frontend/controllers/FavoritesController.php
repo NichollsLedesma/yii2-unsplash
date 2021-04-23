@@ -2,15 +2,20 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use DateTime;
 use Exception;
 use Yii;
 use frontend\models\Favorites;
 use frontend\models\UnsplashSearchForm;
+use igogo5yo\uploadfromurl\UploadFromUrl;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\BaseFileHelper;
+use ZipArchive;
 
 /**
  * FavoritesController implements the CRUD actions for Favorites model.
@@ -107,7 +112,14 @@ class FavoritesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $userId = Yii::$app->user->id;
+        $pathFavorite = $this->searchFilePath($model->photo_id, $userId);
+
+        if ($pathFavorite) {
+            unlink($pathFavorite);
+        }
+        $model->delete();
 
         return $this->redirect(['index']);
     }
@@ -131,24 +143,28 @@ class FavoritesController extends Controller
     public function actionAdd(string $photoId)
     {
         $userId = Yii::$app->user->id;
-       
+
         if (!$userId) {
-            var_dump("no user logged");
-            return;
+            Yii::$app->session->setFlash("error", "You need be logged.");
+
+            return $this->goHome();
         }
         $isFavorite = Favorites::find()
             ->where([
                 'photo_id' => $photoId,
                 'user_id' => $userId
-                ])
+            ])
             ->exists();
 
         if ($isFavorite) {
             Yii::$app->session->setFlash("warning", "photo already added.");
         } else {
             $photo = UnsplashController::searchOne($photoId);
+            $url = $photo["urls"]["small"];
+            $this->uploadUrlImage($url, $userId, $photoId);
             $now = date_timestamp_get(new DateTime());
             $newFavorite = new Favorites();
+
             try {
                 $newFavorite->photo_id = $photoId;
                 $newFavorite->user_id = $userId;
@@ -157,11 +173,10 @@ class FavoritesController extends Controller
                 $newFavorite->description = $photo["description"];
                 $newFavorite->created_at = $now;
                 $newFavorite->updated_at = $now;
-                
+
                 $newFavorite->save();
                 Yii::$app->session->setFlash("success", "favorite added.");
             } catch (Exception $e) {
-                var_dump($e->getMessage());
                 Yii::$app->session->setFlash("error", "favorite not added.");
             }
         }
@@ -169,15 +184,75 @@ class FavoritesController extends Controller
         return $this->redirect(array("unsplash/index"));
     }
 
-    public function actionDownload(string $photoId)
+    public function actionDownload(string $photoId = null)
     {
-        $photo = UnsplashController::downloadOne($photoId);
-        echo "<pre>";
-        var_dump($photo);
-        echo "</pre>";
+        $userId = Yii::$app->user->id;
 
-        if($photo){
-            //  TOD: download file and redirect
+        if (!$userId) {
+            Yii::$app->session->setFlash("error", "You need be logged.");
+
+            return $this->goHome();
         }
+
+        if ($photoId) {
+            $fileToDownload = $this->searchFilePath($photoId, $userId);
+
+            if (!$fileToDownload) {
+                Yii::$app->session->setFlash("error", "Resource not found");
+
+                return $this->redirect(array("favorites/index"));
+            } else {
+                Yii::$app->getResponse()->sendFile($fileToDownload);
+            }
+        } else {
+            $path = $this->getPathBase($userId);
+            $listFiles = glob($path);
+            $zipname = time() . "_favorites.zip";
+            $zip = new ZipArchive;
+            $zip->open($zipname, ZipArchive::CREATE);
+
+            foreach ($listFiles as $file) {
+                $parts = explode(DIRECTORY_SEPARATOR, $file);
+                $zip->addFile($file, end($parts));
+            }
+
+            $zip->close();
+            Yii::$app->getResponse()->sendFile($zipname);
+            unlink($zipname);
+        }
+    }
+
+    private function getPathBase(string $userId)
+    {
+        return 'uploads' . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . "*";
+    }
+
+    private function searchFilePath(string $photoId, string $userId)
+    {
+        $fileToDownload = null;
+        $path = $this->getPathBase($userId);
+        $listFiles = glob($path);
+
+        foreach ($listFiles as $filename) {
+            if (str_contains($filename, $photoId)) {
+                $fileToDownload = $filename;
+            }
+        }
+
+        return $fileToDownload;
+    }
+
+    private function uploadUrlImage(string $url, int $userId, string $photoId)
+    {
+        $ext = $this->getExtension($url);
+        $path = 'uploads' . DIRECTORY_SEPARATOR . $userId;
+        BaseFileHelper::createDirectory($path);
+        $file = UploadFromUrl::initWithUrl($url);
+        $file->saveAs($path . DIRECTORY_SEPARATOR . "$photoId$ext");
+    }
+
+    private function getExtension(string $url)
+    {
+        return "." . explode("&", explode("&fm=", $url)[1], 2)[0];
     }
 }

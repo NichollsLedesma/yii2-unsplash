@@ -21,7 +21,8 @@
         "yiisoft/yii2-httpclient": "^2.0",
         "unsplash/unsplash": "^3.1",
         "yiisoft/yii2-debug": "2.1.16",
-        "yiisoft/yii2-redis": "~2.0.0"
+        "yiisoft/yii2-redis": "~2.0.0",
+        "igogo5yo/yii2-upload-from-url": ">=1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

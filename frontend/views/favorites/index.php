@@ -2,39 +2,13 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\BaseStringHelper;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Favorites';
 $this->params['breadcrumbs'][] = $this->title;
-
-function formatUrl($url)
-{
-    $length = 100;
-    
-    if(strlen($url) < $length){
-        return $url;
-    }
-
-    return substr($url,0,$length) . "...";
-}
-
-function formatDescription($description)
-{
-    $length = 25;
-
-    if(!$description){
-        return "No description";
-    }
-    
-    if(strlen($description) < $length){
-        return $description;
-    }
-
-    return substr($description,0,$length) . "...";
-
-}
 
 ?>
 <div class="favorites-index">
@@ -44,6 +18,9 @@ function formatDescription($description)
     <!--    <p>
         <?= Html::a('Create Favorites', ['create'], ['class' => 'btn btn-success']) ?>
     </p> -->
+    <p>
+        <?= Html::a(Yii::t('app', 'Download as Zip'), ['favorites/download'], ['class' => 'btn btn-success']) ?>
+    </p>
 
 
     <?= GridView::widget([
@@ -51,7 +28,7 @@ function formatDescription($description)
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'id',
-            // 'photo_id',
+            // 'url:url',
             // [
             //     'attribute' => 'url:url',
             //     'label' => 'Link',
@@ -60,14 +37,14 @@ function formatDescription($description)
             //     },
             // ],
             'title',
-            // 'description:ntext',
             [
                 'attribute' => 'description',
                 'label' => 'Description',
                 'value' => function ($data) {
-                    return formatDescription($data->description);
+                    return BaseStringHelper::truncate($data->description, 25, '...');
                 },
             ],
+
             'created_at:datetime',
             ['class' => 'yii\grid\ActionColumn'],
         ],
