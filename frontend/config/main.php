@@ -36,11 +36,14 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+    
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                // '/login' => "/site/login"
+                // '<module:gii>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
             ],
         ],
         */

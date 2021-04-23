@@ -6,8 +6,20 @@ return [
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
+        // 'cache' => [
+        //     'class' => 'yii\caching\FileCache',
+        // ],
+        // 'db' => [
+        //     'class' => 'yii\db\Connection',
+        // ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\redis\Cache',
+            'defaultDuration' => 86400,
+            'redis' => [
+                'hostname' => 'localhost',
+                'port' => 6379,
+                'database' => 0,
+            ]
         ],
     ],
 ];

@@ -22,6 +22,37 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <style>
+    .container-photos {
+        height: auto;
+        width: 100%;
+        display: flex !important;
+    }
+
+    .unsplash-photos {
+        align-items: center;
+        width: 100%;
+        height: auto;
+    }
+
+    .box-photo {
+        margin: 5px;
+        border: 1px solid #dadada;
+        float: left;
+        width: 30%;
+    }
+
+    .box-photo img {
+        width: 100%;
+        height: auto;
+    }
+
+    .box-photo .description {
+        padding: 15px;
+        text-align: center;
+    }
+</style>
+
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -36,9 +67,8 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
+        ['label' => 'Unsplash', 'url' => ['/unsplash/index']],
+        ['label' => 'Favorites', 'url' => ['/favorites/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
