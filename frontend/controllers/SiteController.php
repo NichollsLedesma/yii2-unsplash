@@ -73,6 +73,7 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+        // var_dump("asdasd");
         $collection = [];
 
         if (!Yii::$app->user->isGuest) {

@@ -227,6 +227,7 @@ class FavoritesController extends Controller
 
             $zip->close();
             Yii::$app->getResponse()->sendFile($zipname);
+            chmod($zipname, 0744);
             unlink($zipname);
         }
     }

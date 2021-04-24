@@ -37,7 +37,6 @@ return [
             'errorAction' => 'site/error',
         ],
     
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -46,7 +45,6 @@ return [
                 // '<module:gii>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

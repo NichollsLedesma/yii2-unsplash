@@ -2,20 +2,18 @@ version: "3.3"
 
 services:
   nginx:
-    depends_on:
-      - pgsql
-      - php
-    restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./docker/nginx
-    environment:
-      TZ: America/Argentina/Buenos_Aires
-    ports:
-      - "8081:80"
-    volumes:
-      - ./files:/var/www/html/
     container_name: yii2_ngnix
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/config/yii2-test.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
     networks:
       - yii-network
 
@@ -37,69 +35,41 @@ services:
       - yii-network
 
   php:
-    depends_on:
-      - redis
-    restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./docker/php
-      args:
-        UID: 1000
-        GID: 1000
-    ports:
-      - "9002:9000"
-    volumes:
-      - "./files:/var/www/html/"
     container_name: yii2_php
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html/
+    working_dir: /var/www/html/
+    depends_on:
+      - pgsql
+      - redis
     networks:
       - yii-network
 
   redis:
     build:
-        dockerfile: Dockerfile
-        context: ./docker/redis
+      dockerfile: Dockerfile
+      context: ./docker/redis
     container_name: yii2_redis
-    networks:
-      - yii-network
-  
-  frontend:
-    build: frontend
-    ports:
-      - 20080:80
-    volumes:
-      # Re-use local composer cache via host-volume
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      # Mount source-code for development
-      - ./:/app
-    networks:
-      - yii-network
-
-  backend:
-    build: backend
-    ports:
-      - 21080:80
-    volumes:
-      # Re-use local composer cache via host-volume
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      # Mount source-code for development
-      - ./:/app
     networks:
       - yii-network
 
   mail:
     container_name: yii2_mail
     build:
-        dockerfile: Dockerfile
-        context: ./docker/mailhog
+      dockerfile: Dockerfile
+      context: ./docker/mailhog
     logging:
-        driver: 'none'
+      driver: "none"
     ports:
-        - 1025:1025 # smtp server
-        - 8025:8025 # web
+      - 1025:1025 # smtp server
+      - 8025:8025 # web
     networks:
       - yii-network
 
 networks:
-  yii-network: 
+  yii-network:
     driver: bridge
-

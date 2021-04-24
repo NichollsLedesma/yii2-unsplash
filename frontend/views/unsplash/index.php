@@ -19,7 +19,7 @@
             return alert("Search no can't be empty");
         }
 
-        const url = `/index.php?r=unsplash/search`;
+        const url = `/unsplash/search`;
         $.ajax({
             url,
             type: "POST",
@@ -45,7 +45,7 @@
     }
 
     function addFavorites(photoId) {
-        const url = `/index.php?r=favorites/add&photoId=${photoId}`;
+        const url = `/favorites/add?photoId=${photoId}`;
         $.ajax({
             url,
             type: "GET",
